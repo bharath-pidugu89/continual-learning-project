@@ -1,0 +1,286 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+# Device to use CUDA GPU or CPU
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+print(f"Using device: {device}")
+
+# Hyperparameters
+BATCH_SIZE = 32
+LEARNING_RATE = 0.001
+EPOCHS = 3
+
+# Data Transformations
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,), (0.5,))
+])
+
+# Loading MNIST Dataset
+
+mnist_train = datasets.MNIST(
+    root='./data',
+    train=True,
+    download=True,
+    transform=transform
+)
+
+mnist_test = datasets.MNIST(
+    root='./data',
+    train=False,
+    download=True,
+    transform=transform
+)
+
+mnist_train_loader = DataLoader(
+    mnist_train,
+    batch_size=BATCH_SIZE,
+    shuffle=True
+)
+
+mnist_test_loader = DataLoader(
+    mnist_test,
+    batch_size=BATCH_SIZE,
+    shuffle=False
+)
+
+# Loaing Fashion-MNIST Dataset
+
+fashion_train = datasets.FashionMNIST(
+    root='./data',
+    train=True,
+    download=True,
+    transform=transform
+)
+
+fashion_test = datasets.FashionMNIST(
+    root='./data',
+    train=False,
+    download=True,
+    transform=transform
+)
+
+fashion_train_loader = DataLoader(
+    fashion_train,
+    batch_size=BATCH_SIZE,
+    shuffle=True
+)
+
+fashion_test_loader = DataLoader(
+    fashion_test,
+    batch_size=BATCH_SIZE,
+    shuffle=False
+)
+
+#  CNN Model
+
+class SimpleCNN(nn.Module):
+
+    def __init__(self):
+        super(SimpleCNN, self).__init__()
+
+        self.conv_layers = nn.Sequential(
+
+            nn.Conv2d(1, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+
+        self.fc_layers = nn.Sequential(
+
+            nn.Flatten(),
+
+            nn.Linear(64 * 7 * 7, 128),
+            nn.ReLU(),
+
+            nn.Linear(128, 10)
+        )
+
+    def forward(self, x):
+
+        x = self.conv_layers(x)
+        x = self.fc_layers(x)
+
+        return x
+
+# Initializing the model
+
+model = SimpleCNN().to(device)
+
+# Loss Function and Optimizer
+criterion = nn.CrossEntropyLoss()
+
+optimizer = optim.Adam(
+    model.parameters(),
+    lr=LEARNING_RATE
+)
+
+# Training Function
+def train_model(model, train_loader, epochs):
+
+    model.train()
+
+    for epoch in range(epochs):
+
+        running_loss = 0.0
+
+        for images, labels in train_loader:
+
+            images = images.to(device)
+            labels = labels.to(device)
+
+            optimizer.zero_grad()
+
+            outputs = model(images)
+
+            loss = criterion(outputs, labels)
+
+            loss.backward()
+
+            optimizer.step()
+
+            running_loss += loss.item()
+
+        print(f"Epoch [{epoch+1}/{epochs}], Loss: {running_loss:.4f}")
+
+# Evaluation Function
+
+def evaluate_model(model, test_loader):
+
+    model.eval()
+
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+
+        for images, labels in test_loader:
+
+            images = images.to(device)
+            labels = labels.to(device)
+
+            outputs = model(images)
+
+            _, predicted = torch.max(outputs.data, 1)
+
+            total += labels.size(0)
+
+            correct += (predicted == labels).sum().item()
+
+    accuracy = 100 * correct / total
+
+    return accuracy
+
+# TRAIN TASK A (MNIST)
+print("\nTraining on Task A: MNIST\n")
+
+train_model(
+    model,
+    mnist_train_loader,
+    EPOCHS
+)
+
+# Evaluate Task A
+mnist_accuracy_before = evaluate_model(
+    model,
+    mnist_test_loader
+)
+
+print(f"\nMNIST Accuracy BEFORE Task B: {mnist_accuracy_before:.2f}%")
+
+
+# TRAIN TASK B (Fashion-MNIST)
+print("\nTraining on Task B: Fashion-MNIST\n")
+
+train_model(
+    model,
+    fashion_train_loader,
+    EPOCHS
+)
+
+# Evaluate Task B
+fashion_accuracy = evaluate_model(
+    model,
+    fashion_test_loader
+)
+
+print(f"\nFashion-MNIST Accuracy: {fashion_accuracy:.2f}%")
+
+# Re-evaluate Task A
+mnist_accuracy_after = evaluate_model(
+    model,
+    mnist_test_loader
+)
+
+print(f"\nMNIST Accuracy AFTER Task B: {mnist_accuracy_after:.2f}%")
+
+# Results in Table
+results = pd.DataFrame({
+
+    "Metric": [
+        "MNIST Before Task B",
+        "Fashion-MNIST Accuracy",
+        "MNIST After Task B"
+    ],
+
+    "Accuracy": [
+        mnist_accuracy_before,
+        fashion_accuracy,
+        mnist_accuracy_after
+    ]
+})
+
+print("\nResults Summary:\n")
+print(results)
+
+# Reults Plot
+plt.figure(figsize=(8,5))
+
+plt.bar(
+    results["Metric"],
+    results["Accuracy"]
+)
+
+plt.ylabel("Accuracy (%)")
+
+plt.title("Catastrophic Forgetting Demonstration")
+
+plt.ylim(0, 100)
+
+plt.show()
+
+# # Saving results
+# results.to_csv("results/results.csv", index=False)
+
+# plt.savefig("results/catastrophic_forgetting.png")
+
+
+# Ensure results folder and files exist in project structure
+import os
+from shutil import copyfile
+
+# Create 'results' folder if it doesn't exist
+os.makedirs("results", exist_ok=True)
+
+# Save results to CSV again for redundancy (if not already saved above)
+results.to_csv("results/results.csv", index=False)
+
+# Save figure 'catastrophic_forgetting.png' to results folder again for redundancy
+plt.savefig("results/catastrophic_forgetting.png")
+
+# Double-check and print contents of results folder for verification
+print("\nFiles in 'results' folder:")
+print(os.listdir("results"))

@@ -1,0 +1,4 @@
+Metric,Accuracy
+Task A Before Task B,98.63
+Task B Accuracy,89.75
+Task A After EWC,78.14
