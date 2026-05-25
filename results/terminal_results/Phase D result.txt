@@ -1,0 +1,60 @@
+(venv) PS C:\Users\Bharath\CI\continual-learning-project> python main.py
+Using device: cpu
+
+===== REPLAY EXPERIMENT =====
+
+
+===== TRAINING TASK 1 =====
+Epoch [1/3], Loss: 566.0359
+Epoch [2/3], Loss: 229.6294
+Epoch [3/3], Loss: 152.6684
+Task 1 Accuracy: 96.38%
+
+===== TRAINING TASK 2 =====
+Epoch [1/3], Loss: 474.8983
+Epoch [2/3], Loss: 191.9297
+Epoch [3/3], Loss: 124.1399
+Task 1 Accuracy: 90.59%
+Task 2 Accuracy: 96.33%
+
+===== TRAINING TASK 3 =====
+Epoch [1/3], Loss: 509.5804
+Epoch [2/3], Loss: 202.4585
+Epoch [3/3], Loss: 131.6648
+Task 1 Accuracy: 89.43%
+Task 2 Accuracy: 92.83%
+Task 3 Accuracy: 96.41%
+
+===== TRAINING TASK 4 =====
+Epoch [1/3], Loss: 550.8871
+Epoch [2/3], Loss: 216.1508
+Epoch [3/3], Loss: 132.8360
+Task 1 Accuracy: 88.68%
+Task 2 Accuracy: 92.12%
+Task 3 Accuracy: 90.75%
+Task 4 Accuracy: 95.87%
+
+===== TRAINING TASK 5 =====
+Epoch [1/3], Loss: 557.1758
+Epoch [2/3], Loss: 210.5701
+Epoch [3/3], Loss: 126.3206
+Task 1 Accuracy: 89.49%
+Task 2 Accuracy: 91.05%
+Task 3 Accuracy: 90.61%
+Task 4 Accuracy: 91.83%
+Task 5 Accuracy: 96.23%
+
+===== ACCURACY MATRIX =====
+
+[[96.38  0.    0.    0.    0.  ]
+ [90.59 96.33  0.    0.    0.  ]
+ [89.43 92.83 96.41  0.    0.  ]
+ [88.68 92.12 90.75 95.87  0.  ]
+ [89.49 91.05 90.61 91.83 96.23]]
+
+===== CONTINUAL LEARNING METRICS =====
+
+ACC: 91.8420
+BWT: -5.5025
+FWT: 0.0000
+(venv) PS C:\Users\Bharath\CI\continual-learning-project> 
