@@ -7,6 +7,14 @@ from benchmarks.basic_benchmark import (
     build_basic_benchmark
 )
 
+from methods.replay import (
+    run_replay_experiment
+)
+
+from methods.ewc import (
+    run_ewc_experiment
+)
+
 from experiments.sequential_trainer import (
     run_sequential_experiment
 )
@@ -37,6 +45,7 @@ def main():
     print(f"Using device: {device}")
 
     benchmark_type = "permuted"
+    method = "replay"
     
     # Build benchmark
     if benchmark_type == "basic":
@@ -70,12 +79,43 @@ def main():
     model = SimpleCNN().to(device)
 
     # Run continual learning experiment
-    accuracy_matrix = run_sequential_experiment(
-        model,
-        task_manager,
-        device,
-        epochs=3
-    )
+    if method == "baseline":
+
+        accuracy_matrix = (
+            run_sequential_experiment(
+                model,
+                task_manager,
+                device
+            )
+        )
+
+    elif method == "replay":
+
+        results = run_replay_experiment(
+            model,
+            task_manager,
+            device
+        )
+
+        accuracy_matrix = (
+            results["accuracy_matrix"]
+        )
+
+        metrics = results["metrics"]
+
+    elif method == "ewc":
+
+        results = run_ewc_experiment(
+            model,
+            task_manager,
+            device
+        )
+
+        accuracy_matrix = (
+            results["accuracy_matrix"]
+        )
+
+        metrics = results["metrics"]
 
     print("\n===== ACCURACY MATRIX =====\n")
 

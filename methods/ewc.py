@@ -1,9 +1,7 @@
+import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from torch.utils.data import DataLoader
-
-from training.train import train_model
 from training.evaluate import evaluate_model
 
 from metrics.accuracy_matrix import (
@@ -14,20 +12,17 @@ from metrics.metrics_summary import (
     compute_all_metrics
 )
 
-from memory.replay_buffer import (
-    ReplayBuffer
-)
+from methods.ewc_utils import EWC
 
 
-def run_replay_experiment(
+def run_ewc_experiment(
         model,
         task_manager,
         device,
         epochs=3,
-        batch_size=32,
-        memory_size=2000):
+        lambda_ewc=1000):
 
-    print("\n===== REPLAY EXPERIMENT =====\n")
+    print("\n===== EWC EXPERIMENT =====\n")
 
     criterion = nn.CrossEntropyLoss()
 
@@ -42,11 +37,9 @@ def run_replay_experiment(
         num_tasks
     )
 
-    replay_buffer = ReplayBuffer(
-        memory_size=memory_size
-    )
+    ewc_tasks = []
 
-    # Sequential training
+    # Sequential Tasks
     for train_task_id in range(num_tasks):
 
         print(
@@ -54,45 +47,61 @@ def run_replay_experiment(
             f"{train_task_id + 1} ====="
         )
 
-        current_loader = (
+        train_loader = (
             task_manager.train_loaders[
                 train_task_id
             ]
         )
 
-        current_dataset = (
-            current_loader.dataset
-        )
+        # TRAIN LOOP
+        model.train()
 
-        # Combine current dataset + replay memory
-        combined_dataset = (
-            replay_buffer.get_combined_dataset(
-                current_dataset
-            )
-        )
+        for epoch in range(epochs):
 
-        combined_loader = DataLoader(
-            combined_dataset,
-            batch_size=batch_size,
-            shuffle=True
-        )
+            for inputs, labels in train_loader:
 
-        # Train
-        train_model(
+                inputs = inputs.to(device)
+
+                labels = labels.to(device)
+
+                optimizer.zero_grad()
+
+                outputs = model(inputs)
+
+                loss = criterion(
+                    outputs,
+                    labels
+                )
+
+                # EWC penalties from old tasks
+                if len(ewc_tasks) > 0:
+
+                    ewc_loss = 0
+
+                    for old_task in ewc_tasks:
+
+                        ewc_loss += (
+                            old_task.penalty(model)
+                        )
+
+                    loss += (
+                        lambda_ewc * ewc_loss
+                    )
+
+                loss.backward()
+
+                optimizer.step()
+
+        # STORE EWC INFORMATION
+        ewc_task = EWC(
             model,
-            combined_loader,
-            criterion,
-            optimizer,
-            device,
-            epochs=epochs
+            train_loader,
+            device
         )
 
-        # Add current task to replay memory
-        replay_buffer.add_dataset(
-            current_dataset
-        )
+        ewc_tasks.append(ewc_task)
 
-        # Evaluate ALL learned tasks
+        # Evaluate all learned tasks
         for eval_task_id in range(
                 train_task_id + 1):
 
