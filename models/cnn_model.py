@@ -3,12 +3,15 @@ import torch.nn as nn
 
 class SimpleCNN(nn.Module):
 
-    def __init__(self):
+    def __init__(
+            self,
+            input_channels=1,
+            num_classes=10):
         super(SimpleCNN, self).__init__()
 
         self.conv_layers = nn.Sequential(
 
-            nn.Conv2d(1, 32, kernel_size=3, padding=1),
+            nn.Conv2d(input_channels, 32, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2),
 
@@ -24,7 +27,7 @@ class SimpleCNN(nn.Module):
             nn.Linear(64 * 7 * 7, 128),
             nn.ReLU(),
 
-            nn.Linear(128, 10)
+            nn.Linear(128, num_classes)
         )
 
     def forward(self, x):

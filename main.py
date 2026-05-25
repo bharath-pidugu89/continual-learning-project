@@ -15,6 +15,17 @@ from metrics.metrics_summary import (
     compute_all_metrics
 )
 
+from benchmarks.permuted_mnist import (
+    build_permuted_mnist
+)
+
+from benchmarks.rotated_mnist import (
+    build_rotated_mnist
+)
+
+from benchmarks.split_cifar100 import (
+    build_split_cifar100
+)
 
 def main():
 
@@ -25,8 +36,35 @@ def main():
 
     print(f"Using device: {device}")
 
+    benchmark_type = "permuted"
+    
     # Build benchmark
-    task_manager = build_basic_benchmark()
+    if benchmark_type == "basic":
+
+        task_manager = build_basic_benchmark()
+
+        model = SimpleCNN()
+
+    elif benchmark_type == "permuted":
+
+        task_manager = build_permuted_mnist()
+
+        model = SimpleCNN()
+
+    elif benchmark_type == "rotated":
+
+        task_manager = build_rotated_mnist()
+
+        model = SimpleCNN()
+
+    elif benchmark_type == "cifar100":
+
+        task_manager = build_split_cifar100()
+
+        model = SimpleCNN(
+            input_channels=3,
+            num_classes=100
+    )
 
     # Create model
     model = SimpleCNN().to(device)
