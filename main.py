@@ -1,4 +1,5 @@
 import torch
+import pandas as pd
 
 from models.cnn_model import SimpleCNN
 
@@ -8,6 +9,10 @@ from benchmarks.basic_benchmark import (
 
 from experiments.sequential_trainer import (
     run_sequential_experiment
+)
+
+from metrics.metrics_summary import (
+    compute_all_metrics
 )
 
 
@@ -37,6 +42,33 @@ def main():
     print("\n===== ACCURACY MATRIX =====\n")
 
     print(accuracy_matrix)
+    
+    metrics = compute_all_metrics(
+    accuracy_matrix
+    )
+    
+    accuracy_df = pd.DataFrame(
+    accuracy_matrix
+    )
+
+    accuracy_df.to_csv(
+        "results/tables/accuracy_matrix.csv",
+        index=False
+    )
+
+    print("\n===== CONTINUAL LEARNING METRICS =====\n")
+
+    for metric_name, value in metrics.items():
+
+        print(
+            f"{metric_name}: {value:.4f}"
+        )
+        metrics_df = pd.DataFrame([metrics])
+
+    metrics_df.to_csv(
+        "results/tables/metrics.csv",
+        index=False
+    )
 
 
 if __name__ == "__main__":

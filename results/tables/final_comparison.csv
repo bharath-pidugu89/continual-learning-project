@@ -1,4 +1,0 @@
-Method,task_a Retention,task_b Accuracy
-Baseline,32.16,91.49
-Replay Buffer,96.5,91.11
-EWC,70.05,90.26
