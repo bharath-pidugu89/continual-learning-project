@@ -1,0 +1,56 @@
+PS C:\Users\Bharath\CI\continual-learning-project> (Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned) ; (& c:\Users\Bharath\CI\continual-learning-project\venv\Scripts\Activate.ps1)
+(venv) PS C:\Users\Bharath\CI\continual-learning-project> python main.py
+Using device: cpu
+
+===== BASELINE EXPERIMENT =====
+
+Training on Task A...
+Epoch [1/3], Loss: 242.7217
+Epoch [2/3], Loss: 77.5299
+Epoch [3/3], Loss: 55.0948
+Task A Accuracy BEFORE Task B: 98.98%
+
+Training on Task B...
+Epoch [1/3], Loss: 684.4659
+Epoch [2/3], Loss: 442.8432
+Epoch [3/3], Loss: 372.9073
+Task B Accuracy: 91.49%
+Task A Accuracy AFTER Task B: 32.16%
+
+===== REPLAY BUFFER EXPERIMENT =====
+
+Training on Task A...
+Epoch [1/3], Loss: 239.5177
+Epoch [2/3], Loss: 74.2149
+Epoch [3/3], Loss: 50.9324
+Task A BEFORE Task B: 98.95%
+
+Training on Task B WITH Replay Buffer...
+Epoch [1/3], Loss: 678.0230
+Epoch [2/3], Loss: 437.7242
+Epoch [3/3], Loss: 359.3122
+Task B Accuracy WITH Replay: 91.11%
+Task A AFTER Replay: 96.50%
+
+===== EWC EXPERIMENT =====
+
+Training on Task A...
+Epoch [1/3], Loss: 247.2241
+Epoch [2/3], Loss: 78.5110
+Epoch [3/3], Loss: 53.2250
+Task A BEFORE Task B: 98.83%
+
+Training on Task B WITH EWC...
+Epoch [1/3], Loss: 793.9678
+Epoch [2/3], Loss: 572.7843
+Epoch [3/3], Loss: 519.1381
+Task A WITH EWC: 90.26%
+Task B AFTER EWC Training: 70.05%
+
+===== FINAL COMPARISON =====
+
+          Method  task_a Retention  task_b Accuracy
+0       Baseline             32.16            91.49
+1  Replay Buffer             96.50            91.11
+2            EWC             70.05            90.26
+(venv) PS C:\Users\Bharath\CI\continual-learning-project> 
