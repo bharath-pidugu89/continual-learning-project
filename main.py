@@ -2,15 +2,24 @@ from experiments.experiment_runner import (
     run_all_experiments
 )
 
+from visualization.visualization_runner import (
+    generate_all_visualizations
+)
 
 
 def main():
 
     # ====================================
-    # RUN ALL EXPERIMENTS
+    # GENERATE VISUALIZATIONS
     # ====================================
 
-    run_all_experiments()
+    generate_all_visualizations()
+    
+    # ====================================
+    # GENERATE VISUALIZATIONS
+    # ====================================
+
+    generate_all_visualizations()
 
 
 if __name__ == "__main__":
