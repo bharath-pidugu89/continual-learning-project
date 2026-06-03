@@ -14,12 +14,6 @@ def main():
     # ====================================
 
     generate_all_visualizations()
-    
-    # ====================================
-    # GENERATE VISUALIZATIONS
-    # ====================================
-
-    generate_all_visualizations()
 
 
 if __name__ == "__main__":

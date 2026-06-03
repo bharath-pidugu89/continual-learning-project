@@ -1,6 +1,20 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+
+METHOD_COLORS = {
+    "baseline": "#E74C3C",
+    "replay": "#3498DB",
+    "ewc": "#2ECC71"
+}
+
+plt.rcParams.update({
+    "font.size": 12,
+    "axes.titlesize": 18,
+    "axes.labelsize": 14,
+    "legend.fontsize": 12
+})
 
 
 def plot_metric_comparison():
@@ -23,79 +37,90 @@ def plot_metric_comparison():
         "FWT"
     ]
 
+    output_dir = "visualizations/metrics"
+    os.makedirs(output_dir, exist_ok=True)
+
     for benchmark in benchmarks:
 
-        metric_values = {
-            metric: []
-            for metric in metrics
-        }
+        df_all = []
 
         for method in methods:
 
-            metrics_path = (
-
+            metrics_file = (
                 f"results/{method}/"
                 f"{benchmark}/metrics.csv"
             )
 
-            df = pd.read_csv(
-                metrics_path
-            )
+            df = pd.read_csv(metrics_file)
 
-            for metric in metrics:
+            df["Method"] = method
 
-                metric_values[
-                    metric
-                ].append(df[metric][0])
+            df_all.append(df)
 
-        # ==================================
-        # PLOT
-        # ==================================
+        metrics_df = pd.concat(df_all)
 
-        x = range(len(methods))
-
+        x = np.arange(len(methods))
         width = 0.25
 
-        plt.figure(figsize=(10, 6))
+        fig, ax = plt.subplots(
+            figsize=(12, 7)
+        )
 
-        for i, metric in enumerate(metrics):
+        for idx, metric in enumerate(metrics):
 
-            plt.bar(
+            values = metrics_df[metric]
 
-                [p + width * i for p in x],
-
-                metric_values[metric],
-
-                width=width,
-
+            bars = ax.bar(
+                x + idx * width,
+                values,
+                width,
                 label=metric
             )
 
-        plt.xticks(
+            for bar in bars:
 
-            [p + width for p in x],
+                height = bar.get_height()
 
-            methods
+                ax.annotate(
+                    f"{height:.2f}",
+                    xy=(
+                        bar.get_x() +
+                        bar.get_width() / 2,
+                        height
+                    ),
+                    xytext=(0, 3),
+                    textcoords="offset points",
+                    ha='center',
+                    fontsize=9
+                )
+
+        ax.set_title(
+            f"{benchmark.upper()} Dataset\nACC / BWT / FWT Comparison",
+            pad=20
         )
 
-        plt.ylabel("Score")
+        ax.set_ylabel("Metric Value")
 
-        plt.title(
-            f"{benchmark.upper()} "
-            f"Metric Comparison"
+        ax.set_xticks(
+            x + width
         )
 
-        plt.legend()
-
-        os.makedirs(
-            "visualizations/metrics",
-            exist_ok=True
+        ax.set_xticklabels(
+            [m.upper() for m in methods]
         )
+
+        ax.grid(
+            linestyle='--',
+            alpha=0.4
+        )
+
+        ax.legend()
+
+        plt.tight_layout()
 
         plt.savefig(
-
-            f"visualizations/metrics/"
-            f"{benchmark}_metrics.png"
+            f"{output_dir}/{benchmark}_metrics.png",
+            dpi=300
         )
 
         plt.close()

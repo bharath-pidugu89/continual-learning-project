@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 
 
@@ -21,17 +22,16 @@ def generate_summary_table():
 
         for method in methods:
 
-            metrics_path = (
-
+            metrics_file = (
                 f"results/{method}/"
                 f"{benchmark}/metrics.csv"
             )
 
-            df = pd.read_csv(
-                metrics_path
+            metrics_df = pd.read_csv(
+                metrics_file
             )
 
-            row = {
+            rows.append({
 
                 "Benchmark":
                     benchmark,
@@ -40,27 +40,63 @@ def generate_summary_table():
                     method,
 
                 "ACC":
-                    df["ACC"][0],
+                    round(
+                        metrics_df["ACC"][0],
+                        2
+                    ),
 
                 "BWT":
-                    df["BWT"][0],
+                    round(
+                        metrics_df["BWT"][0],
+                        2
+                    ),
 
                 "FWT":
-                    df["FWT"][0]
-            }
-
-            rows.append(row)
+                    round(
+                        metrics_df["FWT"][0],
+                        2
+                    )
+            })
 
     summary_df = pd.DataFrame(rows)
 
+    os.makedirs(
+        "visualizations/tables",
+        exist_ok=True
+    )
+
     summary_df.to_csv(
-
-        "visualizations/"
-        "summary_table.csv",
-
+        "visualizations/tables/summary_table.csv",
         index=False
     )
 
-    print(
-        "\nSummary table generated."
+
+    acc_table = summary_df.pivot(
+        index="Benchmark",
+        columns="Method",
+        values="ACC"
+    )
+
+    bwt_table = summary_df.pivot(
+        index="Benchmark",
+        columns="Method",
+        values="BWT"
+    )
+
+    fwt_table = summary_df.pivot(
+        index="Benchmark",
+        columns="Method",
+        values="FWT"
+    )
+
+    acc_table.to_csv(
+        "visualizations/tables/acc_comparison_table.csv"
+    )
+
+    bwt_table.to_csv(
+        "visualizations/tables/bwt_comparison_table.csv"
+    )
+
+    fwt_table.to_csv(
+        "visualizations/tables/fwt_comparison_table.csv"
     )

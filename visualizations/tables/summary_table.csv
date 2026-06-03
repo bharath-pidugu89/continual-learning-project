@@ -1,0 +1,10 @@
+Benchmark,Method,ACC,BWT,FWT
+basic,baseline,63.42,-60.8,0.0
+basic,replay,92.54,-2.36,0.0
+basic,ewc,85.16,-15.28,0.0
+permuted,baseline,41.86,-66.96,0.0
+permuted,replay,91.52,-4.69,0.0
+permuted,ewc,74.98,-19.24,0.0
+rotated,baseline,76.35,-28.08,0.0
+rotated,replay,97.2,-1.87,0.0
+rotated,ewc,90.22,-9.28,0.0
