@@ -119,7 +119,7 @@ def run_all_experiments():
                 model,
                 task_manager,
                 device,
-                epochs=1
+                epochs=3
             )
 
             # ====================================

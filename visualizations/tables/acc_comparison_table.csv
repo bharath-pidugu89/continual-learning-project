@@ -1,4 +1,4 @@
 Benchmark,baseline,ewc,replay
-basic,63.42,85.16,92.54
-permuted,41.86,74.98,91.52
-rotated,76.35,90.22,97.2
+basic,52.12,73.88,93.7
+permuted,46.0,61.77,90.89
+rotated,79.08,92.53,97.81

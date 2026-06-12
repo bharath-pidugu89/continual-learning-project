@@ -8,6 +8,12 @@ from visualization.visualization_runner import (
 
 
 def main():
+    
+    # ====================================
+    # RUN EXPERIMENTS
+    # ====================================
+
+    run_all_experiments()
 
     # ====================================
     # GENERATE VISUALIZATIONS
