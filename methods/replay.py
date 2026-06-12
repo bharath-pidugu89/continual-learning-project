@@ -14,7 +14,7 @@ from metrics.metrics_summary import (
     compute_all_metrics
 )
 
-from memory.replay_buffer import (
+from methods.replay_buffer import (
     ReplayBuffer
 )
 

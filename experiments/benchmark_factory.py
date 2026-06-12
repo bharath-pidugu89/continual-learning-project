@@ -10,10 +10,6 @@ from benchmarks.rotated_mnist import (
     build_rotated_mnist
 )
 
-from benchmarks.split_cifar100 import (
-    build_split_cifar100
-)
-
 
 def build_benchmark(
         benchmark_name):
@@ -32,12 +28,6 @@ def build_benchmark(
 
         return build_rotated_mnist(
             num_tasks=5
-        )
-
-    elif benchmark_name == "cifar100":
-
-        return build_split_cifar100(
-            num_tasks=10
         )
 
     else:

@@ -1,4 +1,4 @@
-from experiments.sequential_trainer import (
+from methods.sequential_trainer import (
     run_sequential_experiment
 )
 

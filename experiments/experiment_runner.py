@@ -99,16 +99,7 @@ def run_all_experiments():
             # CREATE MODEL
             # ====================================
 
-            if benchmark_name == "cifar100":
-
-                model = SimpleCNN(
-                    input_channels=3,
-                    num_classes=100
-                ).to(device)
-
-            else:
-
-                model = SimpleCNN().to(device)
+            model = SimpleCNN().to(device)
 
             # ====================================
             # RUN METHOD
